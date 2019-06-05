@@ -5,17 +5,23 @@
     
 <meta charset="utf-8" >
 
-<title>Gridea | 虎克欧文</title>
+<title>MYSQL (RDS FOR MYSQL) binlog 实时同步至分析数据库小记 | 虎克欧文</title>
 <meta name="description" content="温故而知新">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://hookover.github.io/blog/favicon.ico?v=1559632652167">
+<link rel="shortcut icon" href="https://hookover.github.io/blog/favicon.ico?v=1559705894223">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://hookover.github.io/blog/styles/main.css">
 
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
 
 
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -30,7 +36,7 @@
   <div class="site-header">
     <div class="left">
       <a href="https://hookover.github.io/blog">
-        <img class="avatar" src="https://hookover.github.io/blog/images/avatar.png?v=1559632652167" alt="" width="32px" height="32px">
+        <img class="avatar" src="https://hookover.github.io/blog/images/avatar.png?v=1559705894223" alt="" width="32px" height="32px">
       </a>
       <a href="https://hookover.github.io/blog">
         <h1 class="site-title">虎克欧文</h1>
@@ -78,55 +84,30 @@
 
 
       <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">MYSQL (RDS FOR MYSQL) binlog 实时同步至分析数据库小记</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2019-06-05</span>
+            
+          </div>
+          <div class="post-content">
+            <h1 id="环境配置">环境配置</h1>
+<h1 id="同步配置">同步配置</h1>
 
-        <div class="current-tag-container">
-          <h2 class="title">
-            <i class="icon icon-pricetags-outline"></i> Gridea
-          </h2> 
+          </div>
         </div>
 
         
-<section class="post-item">
-    <div class="content">
-      <a href="https://hookover.github.io/blog/post/hello-gridea">
-        <h2 class="post-title">Hello Gridea</h2>
-      </a>
-      <div class="post-abstract">
-        <p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
-✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
-
       </div>
-      <div class="post-info">
-        <span><i class="icon icon-calendar-outline"></i> 2018-12-12</span>
+
+      
         
-          <span>
-            <i class="icon icon-pricetags-outline"></i>
-            
-              <a href="https://hookover.github.io/blog/tag/gridea">
-                Gridea
-                
-              </a>
-            
-          </span>
+          <div id="gitalk-container"></div>
         
-      </div>
-    </div>
-    
-      <a href="https://hookover.github.io/blog/post/hello-gridea">
-        <div class="feature-container" style="background-image: url('https://hookover.github.io/blog/post-images/hello-gridea.png')">
-        </div>
-      </a>
-    
-  </section>
 
-
-<div class="pagination-container">
-  
-  
-</div>
-
-
-      </div>
+        
+      
 
       <div class="site-footer">
   <div class="slogan">温故而知新</div>
@@ -160,6 +141,29 @@ var app = new Vue({
 })
 
 </script>
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: 'ce2318ce37ca7e90dc91',
+        clientSecret: 'a4f8d7dcf72f2dd7ccc63d50b41fb04e17fa8077',
+        repo: 'blog',
+        owner: 'hookover',
+        admin: ['hookover'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
 
 
 
