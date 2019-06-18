@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://hookover.github.io/blog</id>
     <title>虎克欧文</title>
-    <updated>2019-06-05T03:38:17.451Z</updated>
+    <updated>2019-06-18T02:32:08.285Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://hookover.github.io/blog"/>
     <link rel="self" href="https://hookover.github.io/blog/atom.xml"/>
@@ -10,6 +10,104 @@
     <logo>https://hookover.github.io/blog/images/avatar.png</logo>
     <icon>https://hookover.github.io/blog/favicon.ico</icon>
     <rights>All rights reserved 2019, 虎克欧文</rights>
+    <entry>
+        <title type="html"><![CDATA[Golang解析Canal投递到Kafka中的Binlog消息体]]></title>
+        <id>https://hookover.github.io/blog/post/golang-jie-xi-canal-tou-di-dao-kafka-zhong-de-binlog-xiao-xi-ti</id>
+        <link href="https://hookover.github.io/blog/post/golang-jie-xi-canal-tou-di-dao-kafka-zhong-de-binlog-xiao-xi-ti">
+        </link>
+        <updated>2019-06-18T02:27:30.000Z</updated>
+        <content type="html"><![CDATA[<p>如果canal投递到kafka未开启json格式，那么投递到kafka中的数据是原始byte数据流
+官方文档太差，最后从canal-go项目中找到解析代码</p>
+<pre><code>import (
+  pb &quot;github.com/CanalClient/canal-go/protocol&quot;
+	&quot;github.com/Shopify/sarama&quot;
+	&quot;github.com/gogo/protobuf/proto&quot;
+	)
+
+func Processor(msg *sarama.ConsumerMessage) (err error) {
+	if msg.Topic != c.GetTopicName() {
+		return &amp;mq.CustomerError{&quot;topic名称不匹配&quot;}
+	}
+	packet := new(pb.Packet)
+	messages := new(pb.Messages)
+	message := new(pb.Message)
+
+	err = proto.Unmarshal(msg.Value, packet)
+	if err != nil {
+		return err
+	}
+
+	var items []pb.Entry
+	var entry pb.Entry
+	switch packet.Type {
+	case pb.PacketType_MESSAGES:
+		err := proto.Unmarshal(packet.Body, messages)
+		if err != nil {
+			return err
+		}
+
+		for _, value := range messages.Messages {
+			err := proto.Unmarshal(value, &amp;entry)
+			if err != nil {
+				return err
+			}
+			items = append(items, entry)
+		}
+
+		message.Entries = items
+		message.Id = messages.GetBatchId()
+
+	}
+
+	printEntry(message.Entries)
+	return
+}
+
+func printEntry(entrys []pb.Entry) {
+
+	for _, entry := range entrys {
+		if entry.GetEntryType() == pb.EntryType_TRANSACTIONBEGIN || entry.GetEntryType() == pb.EntryType_TRANSACTIONEND {
+			continue
+		}
+		rowChange := new(pb.RowChange)
+
+		err := proto.Unmarshal(entry.GetStoreValue(), rowChange)
+		checkError(err)
+		if rowChange != nil {
+			eventType := rowChange.GetEventType()
+			header := entry.GetHeader()
+			fmt.Println(fmt.Sprintf(&quot;================&gt; binlog[%s : %d],name[%s,%s], eventType: %s&quot;, header.GetLogfileName(), header.GetLogfileOffset(), header.GetSchemaName(), header.GetTableName(), header.GetEventType()))
+
+			for _, rowData := range rowChange.GetRowDatas() {
+				if eventType == pb.EventType_DELETE {
+					printColumn(rowData.GetBeforeColumns())
+				} else if eventType == pb.EventType_INSERT {
+					printColumn(rowData.GetAfterColumns())
+				} else {
+					fmt.Println(&quot;-------&gt; before&quot;)
+					printColumn(rowData.GetBeforeColumns())
+					fmt.Println(&quot;-------&gt; after&quot;)
+					printColumn(rowData.GetAfterColumns())
+				}
+			}
+		}
+	}
+}
+func printColumn(columns []*pb.Column) {
+	for _, col := range columns {
+		fmt.Println(fmt.Sprintf(&quot;%s : %s  update= %t&quot;, col.GetName(), col.GetValue(), col.GetUpdated()))
+	}
+}
+
+func checkError(err error) {
+	if err != nil {
+		fmt.Fprintf(os.Stderr, &quot;Fatal error: %s&quot;, err.Error())
+		os.Exit(1)
+	}
+}
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[MYSQL (RDS FOR MYSQL) binlog 实时同步至分析数据库小记]]></title>
         <id>https://hookover.github.io/blog/post/mysql-rds-for-mysql-binlog-shi-shi-tong-bu-zhi-fen-xi-shu-ju-ku-xiao-ji</id>
